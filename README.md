@@ -5,7 +5,7 @@
 
 Please see the [walkthrough video]()
 
-## Desciption
+## Description
 
 It is a social network application programming interface (API), so 
 When you enter a command to start the application,
