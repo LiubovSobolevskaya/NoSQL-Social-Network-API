@@ -1,31 +1,23 @@
 
-app.get('/api/users', (req, res) => {
-
-    User.find({}, (err, result) => {
-        if (result) {
-            res.status(200).json(result);
-        } else {
-            console.log('something went wrong');
-            res.status(500).json({ message: 'something went wrong' });
-        }
-    });
-});
+const router = require('express').Router();
+const {
+    getUsers,
+    getSingleUser,
+    createUser,
+    deleteUser,
+    addFriend,
+    removeFriend,
+} = require('../../controllers/userController');
 
 
-
-app.post('/api/users', (req, res) => {
-    const newUser = new User({ name: req.params.genre });
-    newUswe.save();
-    if (newGenre) {
-        res.status(200).json(newUser);
-    } else {
-        console.log('Something went wrong');
-        res.status(500).json({ message: 'Something went wrong' });
-    }
-});
+router.route('/').get(getUsers).post(createUser);
 
 
-app.get('/api/users/:id', (req, res) => {
+router.route('/:userId').get(getSingleUser).delete(deleteUser);
 
-});
+
+router.route('/:userId/friends/:friendsId').delete(removeFriend).post(addFriend);
+
+module.exports = router;
+
 
