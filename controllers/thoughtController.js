@@ -43,11 +43,27 @@ module.exports = {
     deleteThought(req, res) {
         Thought.findOneAndDelete({ _id: req.params.thoughtId })
             .then((thought) => {
-                !thought
-                    ? res.status(404).json({ message: 'No Thought with that ID' })
-                    : res.json({ message: 'Thought is deleted!' })
+                if (!thought) {
+                    res.status(404).json({ message: 'No Thought with that ID' })
+                }
+                User.findOneAndUpdate(
+                    { thoughts: req.params.thoughtId },
+                    { $pull: { thoughts: req.params.thoughtId } },
+                    { runValidators: true, new: true }
+                )
+                    .then((user) => {
+                        if (!user) {
+                            res.status(404).json({ message: 'No user found with that thought :(' });
+                        }
+                        else {
+                            res.json({ message: 'Thought is deleted!' });
+                        }
+                    });
+
             })
             .catch((err) => res.status(500).json(err));
+
+
     },
     // Update a Thought
     updateThought(req, res) {
@@ -63,11 +79,15 @@ module.exports = {
             )
             .catch((err) => res.status(500).json(err));
     },
-    // addReaction to a thought
+    // add Reaction to a thought
     addReaction(req, res) {
+        console.log('You are adding a reaction');
+        console.log(req.body);
+        const { thoughtId } = req.params;
+        const { reactionBody, username } = req.body;
         Thought.findOneAndUpdate(
-            { _id: req.params.thoughtId },
-            { $addToSet: { reactions: req.body } },
+            { _id: thoughtId },
+            { $addToSet: { reactions: { reactionBody, username } } },
             { runValidators: true, new: true }
         )
             .then((thought) =>
@@ -84,7 +104,7 @@ module.exports = {
     removeReaction(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
-            { $pull: { Reaction: { ReactionId: req.params.ReactionId } } },
+            { $pull: { reactions: { ReactionId: req.params.ReactionId } } },
             { runValidators: true, new: true }
         )
             .then((thought) =>
