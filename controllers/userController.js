@@ -5,14 +5,18 @@ const { User, Thought } = require('../models');
 module.exports = {
     // Get all users
     getUsers(req, res) {
+        // Retrieve all users from the database
         User.find()
             .then(async (users) => {
+                // Create an object containing the users
                 const userObj = {
                     users
                 };
+                // Send the user object as a JSON response
                 return res.json(userObj);
             })
             .catch((err) => {
+                // Handle any errors that occur during the retrieval process
                 console.log(err);
                 return res.status(500).json(err);
             });
@@ -27,6 +31,7 @@ module.exports = {
                     : res.json({ user })
             )
             .catch((err) => {
+                // Handle any errors that occur during the retrieval process
                 console.log(err);
                 return res.status(500).json(err);
             });
@@ -40,6 +45,7 @@ module.exports = {
     },
     // Delete a user and remove their thoughts
     deleteUser(req, res) {
+        // Find and remove the user document with the specified userId
         User.findOneAndRemove({ _id: req.params.userId })
             .then((user) =>
                 !user
@@ -48,6 +54,7 @@ module.exports = {
             )
             .then(() => res.json({ message: 'User and associated thoughts deleted!' }))
             .catch((err) => {
+                // Handle any errors that occur during the retrieval process
                 console.log(err);
                 res.status(500).json(err);
             });
@@ -69,6 +76,7 @@ module.exports = {
 
             .catch((err) => {
                 console.log(err);
+                // Handle any errors that occur during the retrieval process
                 res.status(500).json(err);
             });
     },
@@ -87,7 +95,7 @@ module.exports = {
                         .json({ message: 'No user found with that ID :(' })
                     : res.json(user)
             )
-            .catch((err) => res.status(500).json(err));
+            .catch((err) => res.status(500).json(err));  // Handle any errors that occur during the retrieval process
     },
     // Remove friend from a user's friends list
     removeFriend(req, res) {
@@ -104,6 +112,6 @@ module.exports = {
                         .json({ message: 'No user found with that ID :(' })
                     : res.json(user)
             )
-            .catch((err) => res.status(500).json(err));
+            .catch((err) => res.status(500).json(err));  // Handle any errors that occur during the retrieval process
     },
 };
